@@ -40,7 +40,6 @@
   ComboTree.prototype.init = function () {
     // Setting Doms
     this.comboTreeId = 'comboTree' + Math.floor(Math.random() * 999999);
-
     this._elemInput.addClass('comboTreeInputBox');
 
     if (this._elemInput.attr('id') === undefined)
@@ -381,7 +380,6 @@
         }
       }
     }
-
     if (this.options.cascadeSelect) {
       if ($(ctItem).parent('li').hasClass('ComboTreeItemParent')) {
         var subMenu = $(ctItem).parent('li').children('ul').first().find('input[type="checkbox"]');
@@ -414,20 +412,110 @@
   };
 
   ComboTree.prototype.refreshInputVal = function () {
-    var tmpTitle = "";
-
+    var expe = "";
     if (this.options.isMultiple) {
-      for (var i = 0; i < this._selectedItems.length; i++) {
-        tmpTitle += this._selectedItems[i].title;
-        if (i < this._selectedItems.length - 1)
-          tmpTitle += ", ";
+      if ($(this._elemHoveredItem).parent('li').parent('ul').siblings()[1]) { // Child
+        if ($(this._elemHoveredItem).parent('li').parent('ul').parent('li').parent('ul').parent('div').parent('div').siblings('h3')[0].innerHTML == 'Multi Selection With Cascade Option Select') {
+          lenOfParent = $(this._elemHoveredItem).parent('li').parent('ul').parent('li').parent('ul').children('li').length;
+          for (i = 0; i < lenOfParent; i++) {
+            if ($($(this._elemHoveredItem).parent('li').parent('ul').parent('li').parent('ul').children('li')[i]).children().length == 1) {
+              if ($($($(this._elemHoveredItem).parent('li').parent('ul').parent('li').parent('ul').children('li')[i])[0]).find("input").prop('checked')) {
+                expe += (($(this._elemHoveredItem).parent('li').parent('ul').parent('li').parent('ul').children('li')[i]).innerText) + '; '
+              }
+            }
+            else if ($($($(this._elemHoveredItem).parent('li').parent('ul').parent('li').parent('ul').children('li')[i]).children()[1]).find("input").prop('checked')) {
+              expe += ($($(this._elemHoveredItem).parent('li').parent('ul').parent('li').parent('ul').children('li')[i]).children()[1]).innerText + ': ';
+              lenOfChildren = $($($(this._elemHoveredItem).parent('li').parent('ul').parent('li').parent('ul').children('li')[i]).children()[2]).children().length;
+              var indices = []
+              for (j = 0; j < lenOfChildren; j++) {
+                if ($($($($(this._elemHoveredItem).parent('li').parent('ul').parent('li').parent('ul').children('li')[i]).children()[2]).children()[j]).find("input").prop('checked')) {
+                  indices.push(j);
+                }
+              }
+              for (j = 0; j < indices.length - 1; j++) {
+                expe += ($($($(this._elemHoveredItem).parent('li').parent('ul').parent('li').parent('ul').children('li')[i]).children()[2]).children()[indices[j]]).innerText + ', '
+              }
+              if (indices.length)
+                expe += ($($($(this._elemHoveredItem).parent('li').parent('ul').parent('li').parent('ul').children('li')[i]).children()[2]).children()[indices[indices.length - 1]]).innerText + '; '
+            }
+          }
+        }
+        else {
+          for (var i = 0; i < this._selectedItems.length; i++) {
+            expe += this._selectedItems[i].title;
+            if (i < this._selectedItems.length - 1)
+              expe += ", ";
+          }
+        }
+      }
+      else  // Parent
+      {
+        if ($($(this._elemHoveredItem).parent('li')[0]).hasClass('ComboTreeItemChlid')) {
+          if ($($(this._elemHoveredItem).parent('li')[0]).parent('ul').parent('div').parent('div').siblings('h3')[0].innerHTML == 'Multi Selection With Cascade Option Select') {
+            lenOfParent = $(this._elemHoveredItem).parent('li').parent('ul').children('li').length;
+            for (i = 0; i < lenOfParent; i++) {
+              if ($($(this._elemHoveredItem).parent('li').parent('ul').children('li')[i]).children().length == 1) {
+                if ($($($(this._elemHoveredItem).parent('li').parent('ul').children('li')[i])[0]).find("input").prop('checked')) {
+                  expe += (($(this._elemHoveredItem).parent('li').parent('ul').children('li')[i]).innerText) + '; '
+                }
+              }
+              else if ($($($(this._elemHoveredItem).parent('li').parent('ul').children('li')[i]).children()[1]).find("input").prop('checked')) {
+                expe += ($($(this._elemHoveredItem).parent('li').parent('ul').children('li')[i]).children()[1]).innerText + ': ';
+                lenOfChildren = $($($(this._elemHoveredItem).parent('li').parent('ul').children('li')[i]).children()[2]).children().length;
+                var indices = []
+                for (j = 0; j < lenOfChildren; j++) {
+                  if ($($($($(this._elemHoveredItem).parent('li').parent('ul').children('li')[i]).children()[2]).children()[j]).find("input").prop('checked')) {
+                    indices.push(j);
+                  }
+                }
+                for (j = 0; j < indices.length - 1; j++) {
+                  expe += ($($($(this._elemHoveredItem).parent('li').parent('ul').children('li')[i]).children()[2]).children()[indices[j]]).innerText + ', '
+                }
+                if (indices.length)
+                  expe += ($($($(this._elemHoveredItem).parent('li').parent('ul').children('li')[i]).children()[2]).children()[indices[indices.length - 1]]).innerText + '; '
+              }
+            }
+          }
+          else {
+            for (var i = 0; i < this._selectedItems.length; i++) {
+              expe += this._selectedItems[i].title;
+              if (i < this._selectedItems.length - 1)
+                expe += ", ";
+            }
+          }
+        }
+        else {
+          lenOfParent = $(this._elemHoveredItem).parent('li').parent('ul').children('li').length;
+          for (i = 0; i < lenOfParent; i++) {
+            if ($($(this._elemHoveredItem).parent('li').parent('ul').children('li')[i]).children().length == 1) {
+              if ($($($(this._elemHoveredItem).parent('li').parent('ul').children('li')[i])[0]).find("input").prop('checked')) {
+                expe += (($(this._elemHoveredItem).parent('li').parent('ul').children('li')[i]).innerText) + '; '
+              }
+            }
+            else if ($($($(this._elemHoveredItem).parent('li').parent('ul').children('li')[i]).children()[1]).find("input").prop('checked')) {
+              expe += ($($(this._elemHoveredItem).parent('li').parent('ul').children('li')[i]).children()[1]).innerText + ': ';
+              lenOfChildren = $($($(this._elemHoveredItem).parent('li').parent('ul').children('li')[i]).children()[2]).children().length;
+              var indices = []
+              for (j = 0; j < lenOfChildren; j++) {
+                if ($($($($(this._elemHoveredItem).parent('li').parent('ul').children('li')[i]).children()[2]).children()[j]).find("input").prop('checked')) {
+                  indices.push(j);
+                }
+              }
+              for (j = 0; j < indices.length - 1; j++) {
+                expe += ($($($(this._elemHoveredItem).parent('li').parent('ul').children('li')[i]).children()[2]).children()[indices[j]]).innerText + ', '
+              }
+              if (indices.length)
+                expe += ($($($(this._elemHoveredItem).parent('li').parent('ul').children('li')[i]).children()[2]).children()[indices[indices.length - 1]]).innerText + '; '
+            }
+          }
+        }
       }
     }
     else {
-      tmpTitle = this._selectedItem.title;
+      expe = this._selectedItem.title;
     }
 
-    this._elemInput.val(tmpTitle);
+    this._elemInput.val(expe);
     this._elemInput.trigger('change');
 
     if (this.changeHandler)
